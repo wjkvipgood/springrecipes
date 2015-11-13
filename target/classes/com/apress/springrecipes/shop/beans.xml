@@ -1,0 +1,110 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/util
+		http://www.springframework.org/schema/util/spring-util-3.0.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context-3.0.xsd
+		http://www.springframework.org/schema/aop
+		http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+		
+	<aop:aspectj-autoproxy/>
+	
+	<context:annotation-config />
+	
+	<!-- 调用静态工厂方法创建Bean -->
+	<bean id="staticFactoryMethodAaa" class="com.apress.springrecipes.shop.ProductCreator" factory-method="createProduct">
+		<constructor-arg value="aaa"/>
+	</bean>
+	<bean id="staticFactoryMethodCdrw" class="com.apress.springrecipes.shop.ProductCreator" factory-method="createProduct">
+		<constructor-arg value="cdrw"/>
+	</bean>
+	
+	<!-- 调用实例工厂方法创建Bean -->
+	<bean id="productCreator" class="com.apress.springrecipes.shop.ProductCreator">
+		<property name="products">
+			<map>
+				<entry key="aaa">
+					<bean class="com.apress.springrecipes.shop.Battery">
+						<property name="name" value="AAA"/>
+						<property name="price" value="2.5"/>
+					</bean>
+				</entry>
+				<entry key="cdrw">
+					<bean class="com.apress.springrecipes.shop.Battery">
+						<property name="name" value="CD-RW"/>
+						<property name="price" value="1.5"/>
+					</bean>
+				</entry>
+			</map>
+		</property>
+	</bean>
+	<bean id="memberFactoryMethodAaa" factory-bean="productCreator" factory-method="createProduct2">
+		<constructor-arg value="aaa"/>
+	</bean>
+	<bean id="memberFactoryMethodCdrw" factory-bean="productCreator" factory-method="createProduct2">
+		<constructor-arg value="cdrw"/>
+	</bean>
+	
+	<!-- 将静态字段声明为一个Bean -->
+	<util:constant id="staticPropertyAaa" static-field="com.apress.springrecipes.shop.Product.AAA"/>
+	<util:constant id="staticPropertyCdrw" static-field="com.apress.springrecipes.shop.Product.CDRW"/>
+	
+	<!-- 把对象的内部属性声明为Bean -->
+	<bean id="productRanking" class="com.apress.springrecipes.shop.ProductRanking">
+		<property name="bestSeller">
+			<bean class="com.apress.springrecipes.shop.Disc">
+				<property name="name" value="CD-RW"/>
+				<property name="price" value="1.5"/>
+			</bean>
+		</property>
+	</bean>
+	<util:property-path id="bestSeller" path="productRanking.bestSeller"/>
+
+	<bean id="aaa" class="com.apress.springrecipes.shop.Battery">
+		<property name="name" value="AAA"/>
+		<property name="price" value="2.5"/>
+	</bean>
+	
+	<bean id="cdrw" class="com.apress.springrecipes.shop.Disc">
+		<property name="name" value="CD-RW"/>
+		<property name="price" value="1.5"/>
+	</bean>
+	
+	<bean id="dvdrw" class="com.apress.springrecipes.shop.Disc">
+		<property name="name" value="DVD-RW"/>
+		<property name="price" value="3.0"/>
+	</bean>
+	
+	<bean id="shoppingCart" class="com.apress.springrecipes.shop.ShoppingCart" scope="prototype"/>
+	
+	<bean id="cashier1" class="com.apress.springrecipes.shop.Cashier">
+		<property name="name" value="cashier1"/>
+		<property name="path" value="/Users/wujiangkun"/>
+	</bean>
+	
+	<bean id="aaaUseFactory" class="com.apress.springrecipes.shop.DiscountFactoryBean">
+		<property name="product">
+			<bean class="com.apress.springrecipes.shop.Battery">
+				<constructor-arg value="AAA"/>
+				<constructor-arg value="2.5"/>
+			</bean>
+		</property>
+		<property name="discount" value="0.2"/>
+	</bean>
+	
+	<bean id="cdrwUseFactory" class="com.apress.springrecipes.shop.DiscountFactoryBean">
+		<property name="product">
+			<bean class="com.apress.springrecipes.shop.Disc">
+				<constructor-arg value="CD-RW"/>
+				<constructor-arg value="1.5"/>
+			</bean>
+		</property>
+		<property name="discount" value="0.1"/>
+	</bean>
+	
+</beans>

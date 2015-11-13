@@ -1,0 +1,166 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/context 
+		http://www.springframework.org/schema/context/spring-context-3.0.xsd
+		http://www.springframework.org/schema/util 
+		http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+
+	<context:annotation-config/>
+
+	<bean id="baseSequenceGenerator" class="com.apress.springrecipes.sequence.SequenceGenerator">
+		<property name="prefix" value="30"/>
+		<property name="suffix" value="A"/>
+		<property name="initial" value="100000"/>
+		
+		<!-- <constructor-arg value="30"/>
+		<constructor-arg value="A"/>
+		<constructor-arg value="100000"/> -->
+		
+		<property name="aList">
+			<list>
+				<value>A</value>
+				<bean class="java.net.URL">
+					<constructor-arg value="http"/>
+					<constructor-arg value="www.apress.com"/>
+					<constructor-arg value="/"/>
+				</bean>
+			</list>
+		</property>
+		
+		<property name="anArray">
+			<list>
+				<value>B</value>
+				<bean class="java.net.URL">
+					<constructor-arg value="http"/>
+					<constructor-arg value="www.apress.com"/>
+					<constructor-arg value="/"/>
+				</bean>
+			</list>
+		</property>
+		
+		<property name="aSet">
+			<set>
+				<value>C</value>
+				<bean class="java.net.URL">
+					<constructor-arg value="http"/>
+					<constructor-arg value="www.apress.com"/>
+					<constructor-arg value="/"/>
+				</bean>
+			</set>
+		</property>
+		
+		<property name="aMap">
+			<map>
+				<entry key="mayKey1" value="D"/>
+				<entry key="mayKey2">
+					<bean class="java.net.URL">
+						<constructor-arg value="http"/>
+						<constructor-arg value="www.apress.com"/>
+						<constructor-arg value="/"/>
+					</bean>
+				</entry>
+			</map>
+		</property>
+		
+		<property name="theProperties">
+			<props>
+				<prop key="propertyKey1">E</prop>
+				<prop key="propertyKey2">http://www.apress.org</prop>
+			</props>
+		</property>
+		
+		<property name="mergeList">
+			<list>
+				<value>A</value>
+				<value>B</value>
+			</list>
+		</property>
+		
+		<property name="mergeSet">
+			<set>
+				<value>A</value>
+				<value>B</value>
+			</set>
+		</property>
+		
+		<property name="mergeMap">
+			<map>
+				<entry key="type" value="ParentTypeValue"/>
+				<entry key="url" value="http://www.wjk.com"/>
+			</map>
+		</property>
+		
+	</bean>
+	<!-- 不建议的写法,据说出现ref的时候，某些情况下会出错 -->
+	<bean id="sequenceGenerator2" class="com.apress.springrecipes.sequence.SequenceGenerator"
+		p:prefix="40" p:suffix="B" p:initial="200000"/>
+		
+	<bean id="sequenceGenerator" parent="baseSequenceGenerator">
+		<property name="mergeList">
+			<list merge="true">
+				<value>A</value>
+				<value>C</value>
+			</list>
+		</property>
+		
+		<property name="mergeSet">
+			<set merge="true">
+				<value>A</value>
+				<value>C</value>
+			</set>
+		</property>
+		
+		<property name="mergeMap">
+			<map merge="true">
+				<entry key="type" value="SubTypeValue"/>
+				<entry key="url2" value="http://www.wjk.com"/>
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="sequenceGenerator3" class="com.apress.springrecipes.sequence.SequenceGenerator">
+		<constructor-arg type="int" index="0" value="100000"/>
+		<constructor-arg type="java.lang.String" index="1" value="A"/>
+		<property name="prefix" value="30"/>
+	</bean>
+	
+	<bean id="sequenceGeneratorUseGenerator" class="com.apress.springrecipes.sequence.SequenceGenerator">
+		<property name="suffix" value="A"/>
+		<property name="initial" value="100000"/>
+		<property name="prefixGenerator" ref="datePrefixGenerator"/>
+	</bean>
+	<bean id="datePrefixGenerator" class="com.apress.springrecipes.sequence.DatePrefixGenerator">
+		<property name="pattern" value="yyyyMMdd"/>
+	</bean>
+	
+	<bean id="sequenceGeneratorUseFormattedSuffix" class="com.apress.springrecipes.sequence.SequenceGenerator">
+		<property name="formattedSuffix">
+			<list>
+				<value>5</value>
+				<value>10</value>
+				<value>20</value>
+			</list>
+		</property>
+		<property name="initial" value="100000"/>
+		<property name="prefix" value="30"/>
+	</bean>
+	
+	<bean id="sequenceGeneratorUseUtilSet" class="com.apress.springrecipes.sequence.SequenceGenerator">
+		<property name="suffixUseUtilSet">
+			<ref local="suffixUseUtilSet"/>
+		</property>
+		<property name="initial" value="100000"/>
+		<property name="prefix" value="30"/>
+	</bean>
+	<util:set id="suffixUseUtilSet">
+		<value>5</value>
+		<value>10</value>
+		<value>20</value>
+	</util:set>
+		
+</beans>
